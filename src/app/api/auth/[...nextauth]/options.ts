@@ -62,7 +62,7 @@ export const authOptions: NextAuthOptions = {
          session.user.isAcceptingMessages = token.isAcceptingMessages
          session.user.username = token.username
       }
-      return session
+      return session;
     },
    },
    pages :{
