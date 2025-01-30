@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from 'zod'; 
-import { useDebounceValue } from 'usehooks-ts'
+import { useDebounceCallback } from 'usehooks-ts'
 import {
   Form,
   FormField,
@@ -26,7 +26,7 @@ export default function SignUpForm() {
   const [username,setUsername] = useState('');
   const [usernameMessage,setUsernameMessage] = useState('');
   const [checkingUsername,setIsCheckingUsername] = useState(false);
-  const debouncedUsername = useDebounceValue(username,300);
+  const debounced = useDebounceCallback(setUsername,300);
   const [isSubmitting ,setIsSubmitting] = useState(false);
 
   const router = useRouter();
@@ -43,11 +43,12 @@ export default function SignUpForm() {
 
   useEffect(() => {
       const checkUsernameUnique = async () => {
-         if(debouncedUsername){
+        console.log("debounced username",username);
+         if(username){
            setIsCheckingUsername(true);
            try{
             const response = await axios.get<ApiResponse>(
-            `/api/check-username-unique?username=${debouncedUsername}`
+            `/api/unique-username-check?username=${username}`
           );
            setUsernameMessage(response?.data?.message);
            } catch(error){
@@ -59,9 +60,9 @@ export default function SignUpForm() {
             setIsCheckingUsername(false);
            }
          }
-      }
+       }
       checkUsernameUnique();
-  },[debouncedUsername]);
+  },[username]);
  
   const onSubmit = async(data:z.infer<typeof sighUpSchema>) =>{
      setIsSubmitting(true);
@@ -69,10 +70,10 @@ export default function SignUpForm() {
        const response = await axios.post("/api/sign-up",data);
        toast({
         title:'Success',
-        description: response.data.message,
+        description: response?.data?.message,
        });
        
-      //  router.replace() TODO 
+       router.replace(`/verify/${username}`);
 
       setIsSubmitting(false);
      }catch(error){
@@ -111,11 +112,15 @@ export default function SignUpForm() {
                 <Input {...field}
                 onChange={(e) => {
                   field.onChange(e);
-                  setUsername(e.target.value);
+                  debounced(e.target.value);
                 }}
                 />
                 {checkingUsername && <Loader2 className='animate-spin' />}
-
+                {!checkingUsername && usernameMessage && (
+                  <p className={`text-sm ${usernameMessage.trim().toLowerCase() === 'username is unique' ? 'text-green-500':'text-red-500'}`}>
+                   {usernameMessage}
+                  </p>
+                )}
               <FormMessage />
             </FormItem>
           )}

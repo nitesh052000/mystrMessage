@@ -1,9 +1,8 @@
 'use client';
-import React, { useState } from 'react'
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from 'zod'; 
-import { useDebounceValue } from 'usehooks-ts';
+
 import {
   Form,
   FormField,
@@ -16,13 +15,12 @@ import { Input } from '@/components/ui/input';
 import { sighInSchema } from '@/schemas/sighInSchema';
 import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
+import { useRouter } from 'next/navigation';
+import { signIn } from "next-auth/react";
 
 export default function SignInForm() {
-
-  const [username,setUsername] = useState('');
-  const [usernameMessage,setUsernameMessage] = useState('');
-  const [loader, setLoader] = useState('');
-  const debouncedUsername = useDebounceValue(username,300);
+  const router = useRouter();
+  const {toast} = useToast();
 
   const form = useForm<z.infer<typeof sighInSchema>>({
     resolver : zodResolver(sighInSchema),
@@ -32,10 +30,28 @@ export default function SignInForm() {
     }
   })
 
-  const {toast} = useToast();
 
   const onSubmit = async(data:z.infer<typeof sighInSchema>) =>{
-    
+       const result = await signIn('credentials',{
+         redirect: false,
+         identifier:data.identifier,
+         password: data.password,
+       });
+
+       console.log("result",result);
+
+       if(result?.error){
+        toast({
+          title:"Login Failed",
+          description :"Incorrect username or password",
+          variant:"destructive"
+        })
+       }
+
+       if(result?.url){
+        router.replace("/dashboard");
+       }
+
   }
   
   return (
