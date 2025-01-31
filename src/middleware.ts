@@ -6,6 +6,7 @@ import { getToken } from 'next-auth/jwt'
 export async function middleware(request: NextRequest) {
   
   const token = await getToken({req:request})
+   console.log("token",token);
   const url = request.nextUrl
 
   if(token && (
@@ -15,7 +16,7 @@ export async function middleware(request: NextRequest) {
      url.pathname.startsWith('/')
   )
 ){
-  return NextResponse.redirect(new URL('/dasboard',request.url))
+  return NextResponse.redirect(new URL('/dashboard',request.url))
 }
     
   if (!token && url.pathname.startsWith('/dashboard')) {

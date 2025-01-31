@@ -14,7 +14,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { sighInSchema } from '@/schemas/sighInSchema';
 import Link from 'next/link';
-import { useToast } from '@/hooks/use-toast';
+import { useToast } from "@/components/ui/use-toast";
 import { useRouter } from 'next/navigation';
 import { signIn } from "next-auth/react";
 

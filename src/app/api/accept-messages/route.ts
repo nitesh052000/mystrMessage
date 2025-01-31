@@ -4,8 +4,6 @@ import UserModel from "@/model/Users";
 import {User} from "next-auth";
 import { authOptions } from "../auth/[...nextauth]/options";
 
-
-
 export async function POST(request:Request) {
     await dbConnect();
     const session = await getServerSession(authOptions);
@@ -61,7 +59,7 @@ export async function GET(request:Request) {
     const user:User = session?.user as User
 
     if(!session || !session.user){
-
+            
     }
      const userId = user?._id;
 

@@ -1,5 +1,5 @@
 'use client';
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/components/ui/use-toast";
 import { veriftSchema } from "@/schemas/verifySchema";
 import { useParams } from "next/navigation";
 import { useRouter } from 'next/navigation';
@@ -27,6 +27,9 @@ export default function VerifyAccount() {
 
     const form = useForm<z.infer<typeof veriftSchema>>({
         resolver : zodResolver(veriftSchema),
+        defaultValues: {
+    code: "", // Ensure a controlled input from the beginning
+  },
       });
       const onSubmit = async(data:z.infer<typeof veriftSchema>) =>{
          try{
@@ -40,7 +43,7 @@ export default function VerifyAccount() {
             description: response.data.message,
           })
 
-          router.replace("/sigh-in");
+          router.replace("/sign-in");
          }catch(error){
                const axiosError = error as AxiosError<ApiResponse>;
       toast({

@@ -15,11 +15,11 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { sighUpSchema } from '@/schemas/sighUpSchema';
 import Link from 'next/link';
-import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 import axios, { AxiosError } from 'axios';
 import { ApiResponse } from '@/types/ApiResponse';
 import { Loader2 } from 'lucide-react';
+import { useToast } from '@/components/ui/use-toast';
 
 export default function SignUpForm() {
 
