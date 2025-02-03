@@ -13,9 +13,38 @@ import {
 } from "@/components/ui/alert-dialog"
 import { Button } from './ui/button';
 import { X } from 'lucide-react';
+import { Message } from '@/model/Users';
+import { useToast } from './ui/use-toast';
+import axios, { AxiosError } from 'axios';
+import { ApiResponse } from '@/types/ApiResponse';
 
+type MessageCardProps = {
+  message: Message,
+  onMessageDelete: (messageId: string) => void
+}
 
-const MessageCard = () => {
+const MessageCard = ({message,onMessageDelete}: MessageCardProps) => {
+
+const {toast} = useToast();
+const handleDelete = async ()=>{
+  try{
+    const response = await axios.delete<ApiResponse>(`/api/delete-message/${message._id}`);
+
+      toast({
+        title: response.data.message,
+      })
+      onMessageDelete(message._id as string);
+  } catch(error){
+     const axiosError = error as AxiosError<ApiResponse>;
+      toast({
+        title: 'Error',
+        description:
+          axiosError.response?.data.message ?? 'Failed to delete message',
+        variant: 'destructive',
+      });
+    } 
+  }
+
   return (
    <Card>
   <CardHeader>
@@ -36,7 +65,7 @@ const MessageCard = () => {
     </AlertDialogHeader>
     <AlertDialogFooter>
       <AlertDialogCancel>Cancel</AlertDialogCancel>
-      <AlertDialogAction>Continue</AlertDialogAction>
+      <AlertDialogAction onClick={handleDelete}>Continue</AlertDialogAction>
     </AlertDialogFooter>
     </AlertDialogContent>
   </AlertDialog>
@@ -46,6 +75,6 @@ const MessageCard = () => {
   </CardContent>
 </Card>
   )
-}
+ };
 
-export default MessageCard
+export default MessageCard;

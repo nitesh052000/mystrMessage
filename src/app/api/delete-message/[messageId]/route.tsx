@@ -19,7 +19,7 @@ export async function DELETE(request:Request,{ params }: { params: { messageid: 
    try{
     const updatedResult = await UserModel.updateOne(
         {_id:_user._id},
-        {$pull:{messages:{_id:messageid}}}
+        {$pull:{messages:{_id:messageid}}} // apply different method also 
     )
    
      if (updatedResult.modifiedCount === 0) {
