@@ -3,10 +3,12 @@ import dbConnect from "@/lib/dbConnect";
 import UserModel from "@/model/Users";
 import {User} from "next-auth";
 import { authOptions } from "../auth/[...nextauth]/options";
+import mongoose from "mongoose";
 
 export async function GET(request:Request) {
     await dbConnect();
     const session = await getServerSession(authOptions);
+    console.log("session",session);
     const user:User = session?.user as User
 
     if(!session || !user){
@@ -18,7 +20,8 @@ export async function GET(request:Request) {
         })
     }
 
-    const userId = user?._id;
+    const userId = new mongoose.Types.ObjectId(session.user._id);
+    console.log("uerId",userId);
     try{
         const user = await UserModel.aggregate([
             {$match:{_id:userId}},
@@ -27,7 +30,9 @@ export async function GET(request:Request) {
             {$group:{_id:'$_id',messages:{$push:'$messages'}}},
         ]).exec();
 
-        if(!user || user.length === 0){
+         console.log("aggregation result",user);
+
+        if(!user || user?.length === 0){
             return Response.json(
         { message: 'User not found', success: false },
         { status: 404 }

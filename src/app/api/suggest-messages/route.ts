@@ -1,6 +1,6 @@
 import OpenAI from 'openai';
-import { streamText } from 'ai'; // Ensure this is installed
 import { NextResponse } from 'next/server';
+import { streamText } from 'ai';
 
 // Initialize OpenAI client
 const openai = new OpenAI({
@@ -21,29 +21,23 @@ export async function POST(req: Request) {
       messages: [
         {
           role: 'system',
-          content:
-            'You are a creative assistant that generates engaging and open-ended questions for social platforms.',
+          content: 'You are a creative assistant that generates engaging and open-ended questions for social messaging platforms.',
         },
-        { role: 'user', content: prompt },
+        {
+          role: 'user',
+          content: prompt,
+        },
       ],
     });
 
-    // Stream the response text
+    console.log("response",response);
+
+    // Stream the response back to the client
     const stream = streamText(response);
 
-    // Return the stream wrapped in NextResponse
-    return new NextResponse(stream, {
-      headers: {
-        'Content-Type': 'text/event-stream',
-      },
-    });
+    return new Response(stream);
   } catch (error) {
-    console.error('Error:', error);
-
-    // General error response
-    return NextResponse.json(
-      { error: 'An error occurred while processing your request.' },
-      { status: 500 }
-    );
+    console.error('Error generating questions:', error);
+    return NextResponse.error();
   }
 }
