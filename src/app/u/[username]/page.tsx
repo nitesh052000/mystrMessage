@@ -42,7 +42,7 @@ const SendMessage = () => {
     console.log('username',username);
     const [isLoading,setIsLoading] = useState(false);
     const {toast} = useToast();
-    const {complete,completion,error} = useCompletion({
+    const {complete,completion} = useCompletion({
       api:'/api/suggest-messages',
       initialCompletion:initialMessageString,
     });

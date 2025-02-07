@@ -1,14 +1,13 @@
 import { getServerSession } from "next-auth";
 import dbConnect from "@/lib/dbConnect";
 import UserModel from "@/model/Users";
-import {User} from "next-auth";
 import { authOptions } from "../auth/[...nextauth]/options";
 import mongoose from "mongoose";
+import { User } from "next-auth";
 
 export async function POST(request:Request) {
     await dbConnect();
     const session = await getServerSession(authOptions);
-    const user:User = session?.user as User
 
     if(!session || !session.user){
       return Response.json({
@@ -18,6 +17,7 @@ export async function POST(request:Request) {
             status:401
         })
     }
+    const user = session?.user as User;
      const userId = user?._id;
      const {acceptMessages} = await request.json();
 
@@ -54,10 +54,9 @@ export async function POST(request:Request) {
     }
 }
 
-export async function GET(request:Request) {
+export async function GET() {
     await dbConnect();
     const session = await getServerSession(authOptions);
-    const user:User = session?.user as User
 
     if(!session || !session.user){
         return Response.json(
