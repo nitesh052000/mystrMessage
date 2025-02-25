@@ -47,6 +47,8 @@ const SendMessage = () => {
       initialCompletion:initialMessageString,
     });
 
+    
+
     console.log("aiiii",completion);
     
     const form = useForm<z.infer<typeof messageSchema>>({
@@ -54,6 +56,7 @@ const SendMessage = () => {
   })
 
    const messageContent = form.watch('content');
+   console.log("message content",messageContent);
 
 
   const onSubmit = async(data: z.infer<typeof messageSchema>) =>{
@@ -135,7 +138,7 @@ const SendMessage = () => {
      </CardHeader>
     <CardContent className=' flex flex-col space-y-4'>
      {messagesArray.map((message,index)=>(
-         <Button variant={'outline'} key={index}>{message}</Button>
+         <Button onClick={() => form.setValue('content',message)} variant={'outline'} key={index}>{message}</Button>
     ))}
      </CardContent>
     </Card>
